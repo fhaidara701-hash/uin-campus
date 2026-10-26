@@ -1,7 +1,7 @@
 #include <iostream>
-#include <print>
 
-int main() {
-  {
-    
-  }
+int main()
+{
+  std::cout << "UNI CAMPUS";
+  return 0;
+}

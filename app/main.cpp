@@ -1,7 +1,8 @@
-#include <iostream>
 
+#include "uincampus/version.hpp"
+#include <print>
 int main()
 {
-  std::cout << "UNI CAMPUS";
-  return 0;
+  std::println("Bienvenue sur uin-campus !");
+  std::println("Version {}", uin::version());
 }

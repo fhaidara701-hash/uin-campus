@@ -1,4 +1,0 @@
-/home/fatouma/uin-campus/build/debug/CMakeFiles/uincampus_core.dir
-/home/fatouma/uin-campus/build/debug/CMakeFiles/uin-campus.dir
-/home/fatouma/uin-campus/build/debug/CMakeFiles/edit_cache.dir
-/home/fatouma/uin-campus/build/debug/CMakeFiles/rebuild_cache.dir

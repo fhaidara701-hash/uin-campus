@@ -2,6 +2,7 @@
 #include "uincampus/regles.hpp"
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 namespace uin {
 namespace {
@@ -19,7 +20,9 @@ struct ReelLu {
 std::string lireLigne(std::string_view invite) {
     std::cout << invite;
     std::string ligne;
-    std::getline(std::cin, ligne);
+    if (!std::getline(std::cin, ligne)) {
+        throw std::runtime_error("fin de l'entrée standard");
+    }
     return ligne;
 }
 
@@ -51,7 +54,7 @@ std::string lireTexte(std::string_view invite) {
 }
 
 int lireEntier(std::string_view invite, int min, int max) {
-    while (std::cin) {
+    while (true) {
         const auto [valide, valeur] = versEntier(lireLigne(invite));
         if (!valide) {
             std::cout << "Saisie invalide : entrez un nombre entier.\n";
@@ -62,11 +65,10 @@ int lireEntier(std::string_view invite, int min, int max) {
             return valeur;
         }
     }
-    return min;
 }
 
 double lireNote(std::string_view invite) {
-    while (std::cin) {
+    while (true) {
         const auto [valide, note] = versReel(lireLigne(invite));
         if (!valide) {
             std::cout << "Saisie invalide : entrez un nombre (ex. 12.5 ou 12,5).\n";
@@ -77,7 +79,6 @@ double lireNote(std::string_view invite) {
             return note;
         }
     }
-    return noteMin;
 }
 
 } // namespace uin

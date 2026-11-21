@@ -2,10 +2,12 @@
 #include "uincampus/regles.hpp"
 #include "uincampus/saisie.hpp"
 #include "uincampus/version.hpp"
+#include <cstddef>
 #include <cstdlib>
 #include <format>
 #include <print>
 #include <span>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -56,34 +58,39 @@ int main(int argc, char* argv[]) {
             break;
     }
 
-    std::println("UIN-Campus {} - Relevé d'un étudiant\n", uin::version());
-    const std::string nom = uin::lireTexte("Nom de l'étudiant : ");
-    const int nbUE = uin::lireEntier("Nombre d'UE (1 à 30) : ", 1, 30);
+    try {
+        std::println("UIN-Campus {} - Relevé d'un étudiant\n", uin::version());
+        const std::string nom = uin::lireTexte("Nom de l'étudiant : ");
+        const int nbUE = uin::lireEntier("Nombre d'UE (1 à 30) : ", 1, 30);
 
-    std::vector<double> notes;
-    std::vector<double> coefficients;
-    notes.reserve(static_cast<std::size_t>(nbUE));
-    coefficients.reserve(static_cast<std::size_t>(nbUE));
+        std::vector<double> notes;
+        std::vector<double> coefficients;
+        notes.reserve(static_cast<std::size_t>(nbUE));
+        coefficients.reserve(static_cast<std::size_t>(nbUE));
 
-    for (int i{1}; i <= nbUE; ++i) {
-        notes.push_back(uin::lireNote(std::format("  Note de l'UE {} : ", i)));
-        coefficients.push_back(
-            static_cast<double>(uin::lireEntier(std::format("  Coefficient de l'UE {} : ", i), 1, 10)));
+        for (int i{1}; i <= nbUE; ++i) {
+            notes.push_back(uin::lireNote(std::format("  Note de l'UE {} : ", i)));
+            coefficients.push_back(static_cast<double>(
+                uin::lireEntier(std::format("  Coefficient de l'UE {} : ", i), 1, 10)));
+        }
+
+        const double moyenneGenerale = uin::arrondir(uin::moyenne(notes, coefficients));
+        const auto [mini, maxi, moyenneSimple, ecartType] = uin::calculerStatistiques(notes);
+        const std::size_t validees = uin::compterValidees(notes);
+
+        std::println("\n{:-<44}", "");
+        afficherLigne("Étudiant", nom);
+        afficherLigne("Moyenne pondérée", std::format("{:.2f}", moyenneGenerale));
+        afficherLigne("Moyenne simple", std::format("{:.2f}", moyenneSimple));
+        afficherLigne("Note min / max", std::format("{:.2f} / {:.2f}", mini, maxi));
+        afficherLigne("Écart-type", std::format("{:.2f}", ecartType));
+        afficherLigne("UE validées", std::format("{} / {}", validees, nbUE));
+        afficherLigne("Mention", uin::libelle(uin::mentionPour(moyenneGenerale)));
+        std::println("{:-<44}", "");
+
+        return EXIT_SUCCESS;
+    } catch (const std::runtime_error& erreur) {
+        std::println(stderr, "Erreur : {}", erreur.what());
+        return EXIT_FAILURE;
     }
-
-    const double moyenneGenerale = uin::arrondir(uin::moyenne(notes, coefficients));
-    const auto [mini, maxi, moyenneSimple, ecartType] = uin::calculerStatistiques(notes);
-    const int validees = uin::compterValidees(notes);
-
-    std::println("\n{:-<44}", "");
-    afficherLigne("Étudiant", nom);
-    afficherLigne("Moyenne pondérée", std::format("{:.2f}", moyenneGenerale));
-    afficherLigne("Moyenne simple", std::format("{:.2f}", moyenneSimple));
-    afficherLigne("Note min / max", std::format("{:.2f} / {:.2f}", mini, maxi));
-    afficherLigne("Écart-type", std::format("{:.2f}", ecartType));
-    afficherLigne("UE validées", std::format("{} / {}", validees, nbUE));
-    afficherLigne("Mention", uin::libelle(uin::mentionPour(moyenneGenerale)));
-    std::println("{:-<44}", "");
-
-    return EXIT_SUCCESS;
 }

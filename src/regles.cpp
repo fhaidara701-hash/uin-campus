@@ -3,19 +3,13 @@
 namespace uin {
 
 Mention mentionPour(double moyenne) {
-    if (moyenne >= seuilsMentions[3]) {
-        return Mention::TresBien;
+    int rang{0};
+    for (double seuil : seuilsMentions) {
+        if (moyenne >= seuil) {
+            ++rang;
+        }
     }
-    if (moyenne >= seuilsMentions[2]) {
-        return Mention::Bien;
-    }
-    if (moyenne >= seuilsMentions[1]) {
-        return Mention::AssezBien;
-    }
-    if (moyenne >= seuilsMentions[0]) {
-        return Mention::Passable;
-    }
-    return Mention::Ajourne;
+    return static_cast<Mention>(rang);
 }
 
 std::string_view libelle(Mention mention) {
